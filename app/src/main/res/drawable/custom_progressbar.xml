@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?><!-- 有点意思啊 自定义shape 在标题中写 --><!-- 内半径比 ： 用控件的宽高除以这个值 得到圆圈的半径 要求2r<d d就是控件的长宽高 --><!--厚度比同样的 是用空间长宽高除 这里假如是100 除以五十就是2--><!--useLevel=false 就是为了确保能一直转-->
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="0"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:toDegrees="360">
+
+    <shape xmlns:android="http://schemas.android.com/apk/res/android"
+        android:innerRadiusRatio="2.5"
+        android:shape="ring"
+        android:thicknessRatio="15"
+        android:useLevel="false">
+
+        <!-- 这里定义的是圆圈的颜色渐变 从红色到浅红 模式叫sweep-->
+        <gradient
+            android:centerColor="#FF6666"
+            android:endColor="#FF0000"
+            android:startColor="#FFFFFF"
+            android:type="sweep"></gradient>
+
+
+    </shape>
+</rotate>
