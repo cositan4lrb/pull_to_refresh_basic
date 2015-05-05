@@ -1,7 +1,6 @@
 package com.hust.dapang.pull_to_refresh_basic;
 
 import android.content.Context;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.Menu;
@@ -23,33 +22,33 @@ import java.util.Date;
 
 public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScrollListener {
 
-	private LinearLayout mHeaderView; // æ•´ä¸ªå¤´å¸ƒå±€å¯¹è±¡
-	private View mCustomHeaderView; // æ·»åŠ çš„è‡ªå®šä¹‰å¤´å¸ƒå±€
-	private int downY = -1; // æŒ‰ä¸‹æ—¶åˆ»yè½´çš„åç§»é‡
-	private int mPullDownHeaderViewHeight; // ä¸‹æ‹‰å¤´å¸ƒå±€çš„é«˜åº¦
-	private View mPullDownHeaderView; // ä¸‹æ‹‰å¤´å¸ƒå±€çš„viewå¯¹è±¡
+	private LinearLayout mHeaderView; // Õû¸öÍ·²¼¾Ö¶ÔÏó
+	private View mCustomHeaderView; // Ìí¼ÓµÄ×Ô¶¨ÒåÍ·²¼¾Ö
+	private int downY = -1; // °´ÏÂÊ±¿ÌyÖáµÄÆ«ÒÆÁ¿
+	private int mPullDownHeaderViewHeight; // ÏÂÀ­Í·²¼¾ÖµÄ¸ß¶È
+	private View mPullDownHeaderView; // ÏÂÀ­Í·²¼¾ÖµÄview¶ÔÏó
 
-	//å®šä¹‰å‡ ä¸ªå˜é‡ã€€ç”¨ä»¥åŒºåˆ†ä¸‹æ‹‰åˆ·æ–°çš„çŠ¶æ€
-	private final int PULL_DOWN = 0; // ä¸‹æ‹‰åˆ·æ–°
-	private final int RELEASE_REFRESH = 1; // é‡Šæ”¾åˆ·æ–°
-	private final int REFRESHING = 2; // æ­£åœ¨åˆ·æ–°ä¸­..
+	//¶¨Òå¼¸¸ö±äÁ¿¡¡ÓÃÒÔÇø·ÖÏÂÀ­Ë¢ĞÂµÄ×´Ì¬
+	private final int PULL_DOWN = 0; // ÏÂÀ­Ë¢ĞÂ
+	private final int RELEASE_REFRESH = 1; // ÊÍ·ÅË¢ĞÂ
+	private final int REFRESHING = 2; // ÕıÔÚË¢ĞÂÖĞ..
 
-	private int currentState = PULL_DOWN; // å½“å‰ä¸‹æ‹‰å¤´å¸ƒå±€çš„çŠ¶æ€, é»˜è®¤ä¸º: ä¸‹æ‹‰åˆ·æ–°çŠ¶æ€
+	private int currentState = PULL_DOWN; // µ±Ç°ÏÂÀ­Í·²¼¾ÖµÄ×´Ì¬, Ä¬ÈÏÎª: ÏÂÀ­Ë¢ĞÂ×´Ì¬
 
-	private RotateAnimation upAnim; // å‘ä¸Šæ—‹è½¬çš„åŠ¨ç”»
-	private RotateAnimation downAnim; // å‘ä¸‹æ—‹è½¬çš„åŠ¨ç”»
-	private ImageView ivArrow; // å¤´å¸ƒå±€çš„ç®­å¤´
-	private ProgressBar mProgressbar; // å¤´å¸ƒå±€çš„è¿›åº¦åœˆ
-	private TextView tvState; // å¤´å¸ƒå±€çš„çŠ¶æ€
-	private TextView tvLastUpdateTime; // å¤´å¸ƒå±€çš„æœ€ååˆ·æ–°æ—¶é—´
-	private int mListViewYOnScreen = -1; // ListViewåœ¨å±å¹•ä¸­yè½´çš„å€¼ åˆå§‹å€¼ä¸º1
+	private RotateAnimation upAnim; // ÏòÉÏĞı×ªµÄ¶¯»­
+	private RotateAnimation downAnim; // ÏòÏÂĞı×ªµÄ¶¯»­
+	private ImageView ivArrow; // Í·²¼¾ÖµÄ¼ıÍ·
+	private ProgressBar mProgressbar; // Í·²¼¾ÖµÄ½ø¶ÈÈ¦
+	private TextView tvState; // Í·²¼¾ÖµÄ×´Ì¬
+	private TextView tvLastUpdateTime; // Í·²¼¾ÖµÄ×îºóË¢ĞÂÊ±¼ä
+	private int mListViewYOnScreen = -1; // ListViewÔÚÆÁÄ»ÖĞyÖáµÄÖµ ³õÊ¼ÖµÎª1
 
-	private OnRefreshListener mOnRefreshListener; // ä¸‹æ‹‰åˆ·æ–°å’ŒåŠ è½½æ›´å¤šçš„å›è°ƒæ¥å£
-	private View mFooterView; // è„šå¸ƒå±€å¯¹è±¡
-	private int mFooterViewHeight; // è„šå¸ƒå±€çš„é«˜åº¦
-	private boolean isLoadingMore = false; // æ˜¯å¦æ­£åœ¨åŠ è½½æ›´å¤šä¸­, é»˜è®¤ä¸º: false
-	private boolean isEnabledPullDownRefresh = false;//æ˜¯å¦å¯ç”¨ä¸‹æ‹‰åˆ·æ–° é»˜è®¤ä¸ºfalse
-	private boolean isEnabledLoadingMore = false;//æ˜¯å¦å¯ç”¨åŠ è½½æ›´å¤š é»˜è®¤ä¸ºfalse
+	private OnRefreshListener mOnRefreshListener; // ÏÂÀ­Ë¢ĞÂºÍ¼ÓÔØ¸ü¶àµÄ»Øµ÷½Ó¿Ú
+	private View mFooterView; // ½Å²¼¾Ö¶ÔÏó
+	private int mFooterViewHeight; // ½Å²¼¾ÖµÄ¸ß¶È
+	private boolean isLoadingMore = false; // ÊÇ·ñÕıÔÚ¼ÓÔØ¸ü¶àÖĞ, Ä¬ÈÏÎª: false
+	private boolean isEnabledPullDownRefresh = false;//ÊÇ·ñÆôÓÃÏÂÀ­Ë¢ĞÂ Ä¬ÈÏÎªfalse
+	private boolean isEnabledLoadingMore = false;//ÊÇ·ñÆôÓÃ¼ÓÔØ¸ü¶à Ä¬ÈÏÎªfalse
 
 	public PullToRefreshBasicLib(Context context) {
 		super(context);
@@ -69,24 +68,9 @@ public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScr
 		initFooter();
 	}
 
-	/**
-	 * åˆå§‹åŒ–è„šå¸ƒå±€
-	 */
-	private void initFooter() {
-		mFooterView = View.inflate(getContext(), R.layout.refresh_footer_view, null);
-		mFooterView.measure(0, 0);
-		mFooterViewHeight = mFooterView.getMeasuredHeight();
-		mFooterView.setPadding(0, -mFooterViewHeight, 0, 0);
-
-		//addFooterViewæ˜¯ListViewä¸­è‡ªå¸¦çš„æ–¹æ³•
-		this.addFooterView(mFooterView);
-
-		// ç»™å½“å‰Listviewè®¾ç½®ä¸€ä¸ªæ»‘åŠ¨çš„ç›‘å¬äº‹ä»¶
-		this.setOnScrollListener(this);
-	}
 
 	/**
-	 * åˆå§‹åŒ–ä¸‹æ‹‰åˆ·æ–°å¤´å¸ƒå±€
+	 * ³õÊ¼»¯ÏÂÀ­Ë¢ĞÂÍ·²¼¾Ö
 	 */
 	private void initHeader() {
 		mHeaderView = (LinearLayout) View.inflate(getContext(), R.layout.refresh_header_view, null);
@@ -96,33 +80,50 @@ public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScr
 		tvState = (TextView) mHeaderView.findViewById(R.id.tv_refresh_header_view_pull_down_state);
 		tvLastUpdateTime = (TextView) mHeaderView.findViewById(R.id.tv_refresh_header_view_pull_down_last_update_time);
 
-		//è®¾ç½®ä¸€ä¸‹åˆšè¿›å…¥æ—¶ é»˜è®¤çš„æ—¶é—´
-		tvLastUpdateTime.setText("æœ€ååˆ·æ–°æ—¶é—´:" + getCurrentTime());
+		//ÉèÖÃÒ»ÏÂ¸Õ½øÈëÊ± Ä¬ÈÏµÄÊ±¼ä
+		tvLastUpdateTime.setText("×îºóË¢ĞÂÊ±¼ä:" + getCurrentTime());
 
-		// æµ‹é‡ä¸‹æ‹‰åˆ·æ–°å¤´çš„é«˜åº¦.
+		// ²âÁ¿ÏÂÀ­Ë¢ĞÂÍ·µÄ¸ß¶È.
 		mPullDownHeaderView.measure(0, 0);
-		// å¾—åˆ°ä¸‹æ‹‰åˆ·æ–°å¤´å¸ƒå±€çš„é«˜åº¦ ç”¨æµ‹é‡çš„åŠæ³•
+		// µÃµ½ÏÂÀ­Ë¢ĞÂÍ·²¼¾ÖµÄ¸ß¶È ÓÃ²âÁ¿µÄ°ì·¨
 		mPullDownHeaderViewHeight = mPullDownHeaderView.getMeasuredHeight();
-		System.out.println("å¤´å¸ƒå±€çš„é«˜åº¦: " + mPullDownHeaderViewHeight);
+		System.out.println("Í·²¼¾ÖµÄ¸ß¶È: " + mPullDownHeaderViewHeight);
 
-		// éšè—å¤´å¸ƒå±€ æ³¨æ„ æ˜¯æŠŠä¸‹æ‹‰åˆ·æ–°å¤´å¸ƒå±€éšè—æ‰ ä¸è¦ç”¨æ€»çš„å¤´éƒ¨å±€å»æ“ä½œ å¦åˆ™åé¢è¿›è¡Œè®¡ç®—çš„æ—¶å€™ ä¼šé‡å¤è®¡ç®—
+		// Òş²ØÍ·²¼¾Ö ×¢Òâ ÊÇ°ÑÏÂÀ­Ë¢ĞÂÍ·²¼¾ÖÒş²Øµô ²»ÒªÓÃ×ÜµÄÍ·²¿¾ÖÈ¥²Ù×÷ ·ñÔòºóÃæ½øĞĞ¼ÆËãµÄÊ±ºò »áÖØ¸´¼ÆËã
 		mPullDownHeaderView.setPadding(0, -mPullDownHeaderViewHeight, 0, 0);
 
 		this.addHeaderView(mHeaderView);
 
-		// åˆå§‹åŒ–åŠ¨ç”»
+		// ³õÊ¼»¯¶¯»­
 		initAnimation();
 	}
 
-	//ä¸‹æ‹‰åˆ·æ–°åŠ¨ç”»æ•ˆæœ
-	//é€†æ—¶é’ˆå°±æ˜¯è´Ÿæ•°
+	/**
+	 * ³õÊ¼»¯½Å²¼¾Ö
+	 */
+	private void initFooter() {
+		mFooterView = View.inflate(getContext(), R.layout.refresh_footer_view, null);
+		mFooterView.measure(0, 0);
+		mFooterViewHeight = mFooterView.getMeasuredHeight();
+		mFooterView.setPadding(0, -mFooterViewHeight, 0, 0);
+
+		//addFooterViewÊÇListViewÖĞ×Ô´øµÄ·½·¨
+		this.addFooterView(mFooterView);
+
+		// ¸øµ±Ç°ListviewÉèÖÃÒ»¸ö»¬¶¯µÄ¼àÌıÊÂ¼ş
+		this.setOnScrollListener(this);
+	}
+
+
+	//ÏÂÀ­Ë¢ĞÂ¶¯»­Ğ§¹û
+	//ÄæÊ±Õë¾ÍÊÇ¸ºÊı
 	private void initAnimation() {
 		upAnim = new RotateAnimation(
 				0, -180,
 				Animation.RELATIVE_TO_SELF, 0.5f,
 				Animation.RELATIVE_TO_SELF, 0.5f);
 		upAnim.setDuration(500);
-		upAnim.setFillAfter(true);//åŠ¨ç”»ç»“æŸå åœåœ¨ç»“æŸçš„ä½ç½®ä¸Š
+		upAnim.setFillAfter(true);//¶¯»­½áÊøºó Í£ÔÚ½áÊøµÄÎ»ÖÃÉÏ
 
 		downAnim = new RotateAnimation(
 				-180, -360,
@@ -133,9 +134,7 @@ public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScr
 	}
 
 	/**
-	 * æ·»åŠ ä¸€ä¸ªè‡ªå®šä¹‰çš„å¤´å¸ƒå±€.ä¸ç”¨ä¼ ç»Ÿçš„addheaderview ä¸ºçš„æ˜¯æŠŠè½®æ’­å›¾åŠ è¿›å»
-	 *
-	 * @param v
+	 * Ìí¼ÓÒ»¸ö×Ô¶¨ÒåµÄÍ·²¼¾Ö.²»ÓÃ´«Í³µÄaddheaderview ÎªµÄÊÇ°ÑÂÖ²¥Í¼¼Ó½øÈ¥
 	 */
 	public void addCustomHeaderView(View v) {
 		this.mCustomHeaderView = v;
@@ -143,10 +142,7 @@ public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScr
 	}
 
 	/**
-	 * å®ç°ä¸‹æ‹‰åˆ·æ–°çš„è§¦æ‘¸æ–¹æ³•
-	 *
-	 * @param ev
-	 * @return
+	 * ÊµÏÖÏÂÀ­Ë¢ĞÂµÄ´¥Ãş·½·¨
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
@@ -155,95 +151,95 @@ public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScr
 				downY = (int) ev.getY();
 				break;
 			case MotionEvent.ACTION_MOVE:
-				//è¿™é‡Œéœ€è¦ä¸¥è°¨ä¸€ç‚¹ å› ä¸ºå­˜åœ¨è¯¯è§¦çš„æƒ…å†µ ä¸€æ—¦æ²¡æœ‰å–åˆ°å€¼ï¼ˆç¼ºçœå€¼ä¸º-1ï¼‰ å°±å†å–ä¸€æ¬¡
+				//ÕâÀïĞèÒªÑÏ½÷Ò»µã ÒòÎª´æÔÚÎó´¥µÄÇé¿ö Ò»µ©Ã»ÓĞÈ¡µ½Öµ£¨È±Ê¡ÖµÎª-1£© ¾ÍÔÙÈ¡Ò»´Î
 				if (downY == -1) {
 					downY = (int) ev.getY();
 				}
 
-				//å¦‚æœæ²¡æœ‰å¯ç”¨ä¸‹æ‹‰åˆ·æ–°åŠŸèƒ½ ç›´æ¥è·³å‡ºswitch
+				//Èç¹ûÃ»ÓĞÆôÓÃÏÂÀ­Ë¢ĞÂ¹¦ÄÜ Ö±½ÓÌø³öswitch
 				if (!isEnabledPullDownRefresh) {
 					break;
 				}
-				//é™¤äº†ListViewæ–‡ç« åˆ—è¡¨é¡µé¢éœ€è¦å±è”½ä¸‹æ‹‰å›å¼¹ å½“æ­£åœ¨åˆ·æ–°çš„æ—¶å€™ ä¹Ÿè¦å±è”½ å¦åˆ™ä¼šå¯¼è‡´åˆ·æ–°ä¸¤æ¬¡
+				//³ıÁËListViewÎÄÕÂÁĞ±íÒ³ÃæĞèÒªÆÁ±ÎÏÂÀ­»Øµ¯ µ±ÕıÔÚË¢ĞÂµÄÊ±ºò Ò²ÒªÆÁ±Î ·ñÔò»áµ¼ÖÂË¢ĞÂÁ½´Î
 				if (currentState == REFRESHING) {
-					// å½“å‰æ­£åœ¨åˆ·æ–°ä¸­, è·³å‡ºswitch
+					// µ±Ç°ÕıÔÚË¢ĞÂÖĞ, Ìø³öswitch
 					break;
 				}
 
-				// åˆ¤æ–­æ·»åŠ çš„è½®æ’­å›¾æ˜¯å¦å®Œå…¨æ˜¾ç¤ºäº†, å¦‚æœæ²¡æœ‰å®Œå…¨æ˜¾ç¤º,
-				// ä¸æ‰§è¡Œä¸‹é¢ä¸‹æ‹‰å¤´çš„ä»£ç , è·³å‡ºswitchè¯­å¥, æ‰§è¡Œçˆ¶å…ƒç´ çš„touchäº‹ä»¶.
+				// ÅĞ¶ÏÌí¼ÓµÄÂÖ²¥Í¼ÊÇ·ñÍêÈ«ÏÔÊ¾ÁË, Èç¹ûÃ»ÓĞÍêÈ«ÏÔÊ¾,
+				// ²»Ö´ĞĞÏÂÃæÏÂÀ­Í·µÄ´úÂë, Ìø³öswitchÓï¾ä, Ö´ĞĞ¸¸ÔªËØµÄtouchÊÂ¼ş.
 
-				//ã€‹ã€‹éš¾ç‚¹åœ¨äº å¦‚ä½•åˆ¤æ–­ç°åœ¨çš„è½®æ’­å›¾å®Œå…¨æ˜¾ç¤ºäº† è§£å†³åŠæ³•æ˜¯ ç”¨è½®æ’­å›¾çš„ä¸Šæ–¹Yå€¼å»å’ŒListViewçš„ä¸Šæ–¹Yå€¼è¿›è¡Œæ¯”è¾ƒã€Šã€Š
+				//¡·¡·ÄÑµãÔÚÓÚ ÈçºÎÅĞ¶ÏÏÖÔÚµÄÂÖ²¥Í¼ÍêÈ«ÏÔÊ¾ÁË ½â¾ö°ì·¨ÊÇ ÓÃÂÖ²¥Í¼µÄÉÏ·½YÖµÈ¥ºÍListViewµÄÉÏ·½YÖµ½øĞĞ±È½Ï¡¶¡¶
 				if (mCustomHeaderView != null) {
-					int[] location = new int[2]; // 0ä½æ˜¯xè½´çš„å€¼, 1ä½æ˜¯yè½´çš„å€¼
+					int[] location = new int[2]; // 0Î»ÊÇxÖáµÄÖµ, 1Î»ÊÇyÖáµÄÖµ
 
 					if (mListViewYOnScreen == -1) {
-						// è·å–Listviewåœ¨å±å¹•ä¸­yè½´çš„å€¼.
+						// »ñÈ¡ListviewÔÚÆÁÄ»ÖĞyÖáµÄÖµ.
 						this.getLocationOnScreen(location);
 						mListViewYOnScreen = location[1];
-//					System.out.println("ListViewåœ¨å±å¹•ä¸­çš„yè½´çš„å€¼: " + mListViewYOnScreen);
+//					System.out.println("ListViewÔÚÆÁÄ»ÖĞµÄyÖáµÄÖµ: " + mListViewYOnScreen);
 					}
 
-					// è·å–mCustomHeaderViewï¼ˆå°±æ˜¯è½®æ’­å›¾ï¼‰åœ¨å±å¹•yè½´çš„å€¼.
+					// »ñÈ¡mCustomHeaderView£¨¾ÍÊÇÂÖ²¥Í¼£©ÔÚÆÁÄ»yÖáµÄÖµ.
 					mCustomHeaderView.getLocationOnScreen(location);
 					int mCustomHeaderViewYOnScreen = location[1];
-//				System.out.println("mCustomHeaderViewåœ¨å±å¹•ä¸­çš„yè½´çš„å€¼: " + mCustomHeaderViewYOnScreen);
+//				System.out.println("mCustomHeaderViewÔÚÆÁÄ»ÖĞµÄyÖáµÄÖµ: " + mCustomHeaderViewYOnScreen);
 
 					if (mListViewYOnScreen > mCustomHeaderViewYOnScreen) {
-//					System.out.println("æ²¡æœ‰å®Œå…¨æ˜¾ç¤º.");
-						break; //ç›´æ¥è·³åˆ°çˆ¶ç±»æ–¹æ³•é‡Œ super
+//					System.out.println("Ã»ÓĞÍêÈ«ÏÔÊ¾.");
+						break; //Ö±½ÓÌøµ½¸¸Àà·½·¨Àï super
 					}
 				}
 
-				//è·å¾—å½“å‰æ‰‹æŒ‡ç§»åŠ¨åˆ°çš„ç‚¹ä½ç½®
+				//»ñµÃµ±Ç°ÊÖÖ¸ÒÆ¶¯µ½µÄµãÎ»ÖÃ
 				int moveY = (int) ev.getY();
 
-				// ç§»åŠ¨çš„å·®å€¼
+				// ÒÆ¶¯µÄ²îÖµ
 				int diffY = moveY - downY;
 
 				/**
-				 * åŒé‡æ¡ä»¶åˆ¤æ–­è§¦å‘ä¸‹æ‹‰åˆ·æ–°
-				 * å¦‚æœdiffYå·®å€¼å¤§äº0, å‘ä¸‹æ‹–æ‹½
-				 * å¹¶ä¸” å½“å‰ListViewå¯è§çš„ç¬¬ä¸€ä¸ªæ¡ç›®çš„ç´¢å¼•ç­‰äº0 ç´¢å¼•å°±æ˜¯ListViewä¸­çš„æ¡ç›®ç¼–å·
-				 * æ‰è¿›è¡Œä¸‹æ‹‰å¤´çš„æ“ä½œ
+				 * Ë«ÖØÌõ¼şÅĞ¶Ï´¥·¢ÏÂÀ­Ë¢ĞÂ
+				 * Èç¹ûdiffY²îÖµ´óÓÚ0, ÏòÏÂÍÏ×§
+				 * ²¢ÇÒ µ±Ç°ListView¿É¼ûµÄµÚÒ»¸öÌõÄ¿µÄË÷ÒıµÈÓÚ0 Ë÷Òı¾ÍÊÇListViewÖĞµÄÌõÄ¿±àºÅ
+				 * ²Å½øĞĞÏÂÀ­Í·µÄ²Ù×÷
 				 */
 				if (diffY > 0 && getFirstVisiblePosition() == 0) {
-					//ã€‹ã€‹ã€‹æ ¸å¿ƒå…¬å¼ã€Šã€Šã€Šç”¨è´Ÿçš„å¤´éƒ¨å±€é«˜åº¦+ç§»åŠ¨çš„é—´è· = ä¸€ä¸ªè´Ÿå€¼ ä½œä¸ºpaddingtop
+					//¡·¡·¡·ºËĞÄ¹«Ê½¡¶¡¶¡¶ÓÃ¸ºµÄÍ·²¿¾Ö¸ß¶È+ÒÆ¶¯µÄ¼ä¾à = Ò»¸ö¸ºÖµ ×÷Îªpaddingtop
 					int paddingTop = -mPullDownHeaderViewHeight + diffY;
 					//	System.out.println("paddingTop: " + paddingTop);
 
 
-					//åˆ©ç”¨åŒæ¡ä»¶åˆ¤æ–­ åŒºåˆ†å‡ºè¿›å…¥â€œæ—¶åˆ»â€ å’Œç¦»å¼€â€œæ—¶åˆ»â€ è®©åŠ¨ç”»åªæ‰§è¡Œä¸€æ¬¡
+					//ÀûÓÃË«Ìõ¼şÅĞ¶Ï Çø·Ö³ö½øÈë¡°Ê±¿Ì¡± ºÍÀë¿ª¡°Ê±¿Ì¡± ÈÃ¶¯»­Ö»Ö´ĞĞÒ»´Î
 					if (paddingTop > 0 && currentState != RELEASE_REFRESH) {
-						System.out.println("å®Œå…¨æ˜¾ç¤ºäº†, è¿›å…¥åˆ°é‡Šæ”¾åˆ·æ–°");
+						System.out.println("ÍêÈ«ÏÔÊ¾ÁË, ½øÈëµ½ÊÍ·ÅË¢ĞÂ");
 						currentState = RELEASE_REFRESH;
 						refreshPullDownHeaderState();
 					} else if (paddingTop < 0 && currentState != PULL_DOWN) {
-						System.out.println("éƒ¨åˆ†æ˜¾ç¤ºäº†, è¿›å…¥åˆ°ä¸‹æ‹‰åˆ·æ–°");
+						System.out.println("²¿·ÖÏÔÊ¾ÁË, ½øÈëµ½ÏÂÀ­Ë¢ĞÂ");
 						currentState = PULL_DOWN;
 						refreshPullDownHeaderState();
 					}
 
 					mPullDownHeaderView.setPadding(0, paddingTop, 0, 0);
-					//è¿™é‡Œè¿”å›true å¦åˆ™è¿›å…¥çˆ¶ç±»æ–¹æ³•
+					//ÕâÀï·µ»Øtrue ·ñÔò½øÈë¸¸Àà·½·¨
 					return true;
 				}
 				break;
 
-			//æŠ¬èµ·çš„æ—¶å€™æœ‰ä¸¤ç§å¯èƒ½ ä¸€ç§æ˜¯å¤´å¸ƒå±€æ²¡æœ‰å®Œå…¨æš´éœ²æ—¶çš„ å›å¼¹ ä¸€ç§æ˜¯å¤´éƒ¨å±€å®Œå…¨æš´éœ²ä»¥å æ˜¾ç¤ºåœ†åœˆçš„æ»šåŠ¨
+			//Ì§ÆğµÄÊ±ºòÓĞÁ½ÖÖ¿ÉÄÜ Ò»ÖÖÊÇÍ·²¼¾ÖÃ»ÓĞÍêÈ«±©Â¶Ê±µÄ »Øµ¯ Ò»ÖÖÊÇÍ·²¿¾ÖÍêÈ«±©Â¶ÒÔºó ÏÔÊ¾Ô²È¦µÄ¹ö¶¯
 			case MotionEvent.ACTION_UP:
 				downY = -1;
 
 				if (currentState == PULL_DOWN) {
-					// å½“å‰çŠ¶æ€æ˜¯ä¸‹æ‹‰åˆ·æ–°çŠ¶æ€, æŠŠå¤´å¸ƒå±€éšè—.
+					// µ±Ç°×´Ì¬ÊÇÏÂÀ­Ë¢ĞÂ×´Ì¬, °ÑÍ·²¼¾ÖÒş²Ø.
 					mPullDownHeaderView.setPadding(0, -mPullDownHeaderViewHeight, 0, 0);
 				} else if (currentState == RELEASE_REFRESH) {
-					// å½“å‰çŠ¶æ€æ˜¯é‡Šæ”¾åˆ·æ–°, æŠŠå¤´å¸ƒå±€å®Œå…¨æ˜¾ç¤º, å¹¶ä¸”è¿›å…¥åˆ°æ­£åœ¨åˆ·æ–°ä¸­çŠ¶æ€
+					// µ±Ç°×´Ì¬ÊÇÊÍ·ÅË¢ĞÂ, °ÑÍ·²¼¾ÖÍêÈ«ÏÔÊ¾, ²¢ÇÒ½øÈëµ½ÕıÔÚË¢ĞÂÖĞ×´Ì¬
 					mPullDownHeaderView.setPadding(0, 0, 0, 0);
 					currentState = REFRESHING;
 					refreshPullDownHeaderState();
 
-					// è°ƒç”¨ç”¨æˆ·çš„å›è°ƒæ¥å£
+					// µ÷ÓÃÓÃ»§µÄ»Øµ÷½Ó¿Ú
 					if (mOnRefreshListener != null) {
 						mOnRefreshListener.onPullDownRefresh();
 					}
@@ -252,28 +248,28 @@ public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScr
 			default:
 				break;
 		}
-		//æ³¨æ„ è¿™é‡Œçš„ superä¸èƒ½åˆ  å› ä¸ºæ˜¯ç»§æ‰¿çˆ¶ç±» åˆ äº† åˆ™ä¸æ˜¯ä¸‹æ‹‰åˆ·æ–°æ—¶çš„æ™®é€šListViewæ»šåŠ¨ä¼šå¤±æ•ˆ
+		//×¢Òâ ÕâÀïµÄ super²»ÄÜÉ¾ ÒòÎªÊÇ¼Ì³Ğ¸¸Àà É¾ÁË Ôò²»ÊÇÏÂÀ­Ë¢ĞÂÊ±µÄÆÕÍ¨ListView¹ö¶¯»áÊ§Ğ§
 		return super.onTouchEvent(ev);
 	}
 
 	/**
-	 * æ ¹æ®currentStateå½“å‰çš„çŠ¶æ€, æ¥åˆ·æ–°å¤´å¸ƒå±€çš„çŠ¶æ€
+	 * ¸ù¾İcurrentStateµ±Ç°µÄ×´Ì¬, À´Ë¢ĞÂÍ·²¼¾ÖµÄ×´Ì¬
 	 */
 	private void refreshPullDownHeaderState() {
 		switch (currentState) {
-			case PULL_DOWN: // ä¸‹æ‹‰åˆ·æ–°çŠ¶æ€
+			case PULL_DOWN: // ÏÂÀ­Ë¢ĞÂ×´Ì¬
 				ivArrow.startAnimation(downAnim);
-				tvState.setText("ä¸‹æ‹‰åˆ·æ–°");
+				tvState.setText("ÏÂÀ­Ë¢ĞÂ");
 				break;
-			case RELEASE_REFRESH: // é‡Šæ”¾åˆ·æ–°çŠ¶æ€
+			case RELEASE_REFRESH: // ÊÍ·ÅË¢ĞÂ×´Ì¬
 				ivArrow.startAnimation(upAnim);
-				tvState.setText("é‡Šæ”¾åˆ·æ–°");
+				tvState.setText("ÊÍ·ÅË¢ĞÂ");
 				break;
-			case REFRESHING: // æ­£åœ¨åˆ·æ–°ä¸­
+			case REFRESHING: // ÕıÔÚË¢ĞÂÖĞ
 				ivArrow.clearAnimation();
 				ivArrow.setVisibility(View.INVISIBLE);
 				mProgressbar.setVisibility(View.VISIBLE);
-				tvState.setText("æ­£åœ¨åˆ·æ–°ä¸­..");
+				tvState.setText("ÕıÔÚË¢ĞÂÖĞ..");
 				break;
 			default:
 				break;
@@ -281,42 +277,39 @@ public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScr
 	}
 
 	/**
-	 * å½“æ•°æ®åˆ·æ–°å®Œæˆæ—¶è°ƒç”¨æ­¤æ–¹æ³• ç”¨æ¥éšè—å¤´å¸ƒå±€
+	 * µ±Êı¾İË¢ĞÂÍê³ÉÊ±µ÷ÓÃ´Ë·½·¨ ÓÃÀ´Òş²ØÍ·²¼¾Ö
 	 */
 	public void onRefreshFinish() {
 
-		//ç”¨isLoadingMoreä½œä¸ºåˆ¤æ–­å˜é‡ å¯¹åº”å¤´å¸ƒå±€å’Œè„šå¸ƒå±€
+		//ÓÃisLoadingMore×÷ÎªÅĞ¶Ï±äÁ¿ ¶ÔÓ¦Í·²¼¾ÖºÍ½Å²¼¾Ö
 		if (isLoadingMore) {
-			// å½“å‰æ˜¯åŠ è½½æ›´å¤šçš„æ“ä½œ, éšè—è„šå¸ƒå±€
+			// µ±Ç°ÊÇ¼ÓÔØ¸ü¶àµÄ²Ù×÷, Òş²Ø½Å²¼¾Ö
 			isLoadingMore = false;
 			mFooterView.setPadding(0, -mFooterViewHeight, 0, 0);
 		} else {
-			// å½“å‰æ˜¯ä¸‹æ‹‰åˆ·æ–°çš„æ“ä½œ, éšè—å¤´å¸ƒå±€å’Œå¤ä½å˜é‡.
+			// µ±Ç°ÊÇÏÂÀ­Ë¢ĞÂµÄ²Ù×÷, Òş²ØÍ·²¼¾ÖºÍ¸´Î»±äÁ¿.
 			mPullDownHeaderView.setPadding(0, -mPullDownHeaderViewHeight, 0, 0);
 			currentState = PULL_DOWN;
 			mProgressbar.setVisibility(View.INVISIBLE);
 			ivArrow.setVisibility(View.VISIBLE);
-			tvState.setText("ä¸‹æ‹‰åˆ·æ–°");
-			tvLastUpdateTime.setText("æœ€ååˆ·æ–°æ—¶é—´: " + getCurrentTime());
+			tvState.setText("ÏÂÀ­Ë¢ĞÂ");
+			tvLastUpdateTime.setText("×îºóË¢ĞÂÊ±¼ä: " + getCurrentTime());
 		}
 
 	}
 
 	/**
-	 * è·å–å½“å‰æ—¶é—´, æ ¼å¼ä¸º: 1990-09-09 09:09:09
-	 *
+	 * »ñÈ¡µ±Ç°Ê±¼ä, ¸ñÊ½Îª: 1990-09-09 09:09:09
 	 * @return
 	 */
 	private String getCurrentTime() {
-		//Javaé‡Œé¢çš„æ ¼å¼åŒ–å™¨ ç”¨æ¥æä¾›å‡ºæ ¼å¼åŒ–çš„ç³»ç»Ÿæ—¶é—´
+		//JavaÀïÃæµÄ¸ñÊ½»¯Æ÷ ÓÃÀ´Ìá¹©³ö¸ñÊ½»¯µÄÏµÍ³Ê±¼ä
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return format.format(new Date());
 	}
 
 	/**
-	 * è®¾ç½®åˆ·æ–°çš„ç›‘å¬äº‹ä»¶
-	 *
-	 * @param listener
+	 * ÉèÖÃË¢ĞÂµÄ¼àÌıÊÂ¼ş
 	 */
 	public void setOnRefreshListener(OnRefreshListener listener) {
 		this.mOnRefreshListener = listener;
@@ -326,35 +319,35 @@ public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScr
 
 	/**
 	 * @author dapang
-	 *         åˆ·æ–°å›è°ƒæ¥å£
+	 *         Ë¢ĞÂ»Øµ÷½Ó¿Ú
 	 */
 	public interface OnRefreshListener {
 
 		/**
-		 * å½“ä¸‹æ‹‰åˆ·æ–°æ—¶ è§¦å‘æ­¤æ–¹æ³•, å®ç°æ­¤æ–¹æ³•æ˜¯æŠ“å–æ•°æ®.
+		 * µ±ÏÂÀ­Ë¢ĞÂÊ± ´¥·¢´Ë·½·¨, ÊµÏÖ´Ë·½·¨ÊÇ×¥È¡Êı¾İ.
 		 */
 		public void onPullDownRefresh();
 
 		/**
-		 * å½“åŠ è½½æ›´å¤šæ—¶, è§¦å‘æ­¤æ–¹æ³•.
+		 * µ±¼ÓÔØ¸ü¶àÊ±, ´¥·¢´Ë·½·¨.
 		 */
 		public void onLoadingMore();
 
 	}
 
 	/**
-	 * è„šå¸ƒå±€æ˜¾ç¤ºåˆ¤æ–­
-	 * å½“æ»šåŠ¨çš„çŠ¶æ€æ”¹å˜æ—¶è§¦å‘æ­¤æ–¹æ³•.
-	 * scrollState å½“å‰çš„çŠ¶æ€
-	 * SCROLL_STATE_IDLE åœæ»
-	 * SCROLL_STATE_TOUCH_SCROLL è§¦æ‘¸æ»šåŠ¨
-	 * SCROLL_STATE_FLING æƒ¯æ€§æ»‘åŠ¨(çŒ›çš„ä¸€æ»‘)
+	 * ½Å²¼¾ÖÏÔÊ¾ÅĞ¶Ï
+	 * µ±¹ö¶¯µÄ×´Ì¬¸Ä±äÊ±´¥·¢´Ë·½·¨.
+	 * scrollState µ±Ç°µÄ×´Ì¬
+	 * SCROLL_STATE_IDLE Í£ÖÍ
+	 * SCROLL_STATE_TOUCH_SCROLL ´¥Ãş¹ö¶¯
+	 * SCROLL_STATE_FLING ¹ßĞÔ»¬¶¯(ÃÍµÄÒ»»¬)
 	 */
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 
 		if(!isEnabledLoadingMore){
-			//å½“å‰æ²¡æœ‰å¯ç”¨åŠ è½½æ›´å¤šåŠŸèƒ½
+			//µ±Ç°Ã»ÓĞÆôÓÃ¼ÓÔØ¸ü¶à¹¦ÄÜ
 			return;
 		}
 
@@ -362,15 +355,15 @@ public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScr
 				|| scrollState == SCROLL_STATE_FLING) {
 			int lastVisiblePosition = getLastVisiblePosition();
 
-			//æ³¨æ„è¿™é‡Œçš„æ¡ä»¶åˆ¤æ–­ï¼ é¿å…åå¤
+			//×¢ÒâÕâÀïµÄÌõ¼şÅĞ¶Ï£¡ ±ÜÃâ·´¸´
 			if ((lastVisiblePosition == getCount() - 1) && !isLoadingMore) {
-				System.out.println("æ»‘åŠ¨åˆ°åº•éƒ¨äº†");
+				System.out.println("»¬¶¯µ½µ×²¿ÁË");
 
-				//æ£€æµ‹ç›®å‰æ˜¯å¦æ˜¯åŠ è½½æ›´å¤šçŠ¶æ€ é¿å…åå¤è¯·æ±‚ç½‘ç»œ
+				//¼ì²âÄ¿Ç°ÊÇ·ñÊÇ¼ÓÔØ¸ü¶à×´Ì¬ ±ÜÃâ·´¸´ÇëÇóÍøÂç
 				isLoadingMore = true;
 
 				mFooterView.setPadding(0, 0, 0, 0);
-				// æŠŠè„šå¸ƒå±€æ˜¾ç¤ºå‡ºæ¥, æŠŠListViewæ»‘åŠ¨åˆ°æœ€ä½è¾¹
+				// °Ñ½Å²¼¾ÖÏÔÊ¾³öÀ´, °ÑListView»¬¶¯µ½×îµÍ±ß
 				this.setSelection(getCount());
 
 				if (mOnRefreshListener != null) {
@@ -382,18 +375,15 @@ public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScr
 	}
 
 	/**
-	 * å½“æ»šåŠ¨æ—¶è§¦å‘æ­¤æ–¹æ³•
+	 * µ±¹ö¶¯Ê±´¥·¢´Ë·½·¨
 	 */
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem,
 						 int visibleItemCount, int totalItemCount) {
-
 	}
 
 	/**
-	 * æ˜¯å¦å¯ç”¨ä¸‹æ‹‰åˆ·æ–°
-	 *
-	 * @param isEnabled
+	 * ÊÇ·ñÆôÓÃÏÂÀ­Ë¢ĞÂ
 	 */
 	public void isEnabledPullDownRefresh(boolean isEnabled) {
 		isEnabledPullDownRefresh = isEnabled;
@@ -401,12 +391,10 @@ public class PullToRefreshBasicLib extends ListView implements AbsListView.OnScr
 
 
 	/**
-	 * æ˜¯å¦å¯ç”¨åŠ è½½æ›´å¤š
-	 * @param isEnabled
+	 * ÊÇ·ñÆôÓÃ¼ÓÔØ¸ü¶à
 	 */
 	public void isEnabledLoadingMore(boolean isEnabled) {
 		isEnabledLoadingMore = isEnabled;
 	}
-
 
 }
