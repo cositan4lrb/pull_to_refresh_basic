@@ -8,7 +8,7 @@
     
 **Android Studio用户**            
 
-在你的 build.gradle 文件中添加如下compile命令即可引用我的项目。
+在你的 build.gradle 文件中添加如下 compile 命令即可引用我的项目。
 
   `compile 'com.hustdapang.pulltorefreshbasic:app:0.13'`  
     
