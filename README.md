@@ -10,7 +10,7 @@
 
 在你的 build.gradle 文件中添加如下compile命令即可引用我的项目。
 
-  `compile 'com.hustdapang.pulltorefreshbasic:pull_to_refresh_basic:0.12'`  
+  `compile 'com.hustdapang.pulltorefreshbasic:app:0.13'`  
     
     
 #文档风格 1.0   
